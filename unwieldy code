@@ -1,0 +1,161 @@
+with open(filename, newline='') as csvfile:
+	vulgar = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+	femnames = []
+	next(vulgar)
+	for row in vulgar:
+		if startfem == 0 and endfem == 0:
+			if row[0] not in femnames:
+				femnames.append(row[0].title())
+				
+		if startfem == 1 and endfem == 0:
+			if row[0].startswith(startfemale1):
+					if row[0] not in femnames:
+						femnames.append(row[0].title())
+						
+		if startfem == 2 and endfem == 0:
+			if row[0].startswith(startfemale1) or row[0].startswith(startfemale2):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+					
+		if startfem == 3 and endfem == 0:
+			if row[0].startswith(startfemale1) or row[0].startswith(startfemale2) or row[0].startswith(startfemale3):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+					
+#Endfem 1
+		if startfem == 0 and endfem == 1:
+			if row[0].endsswith(endfemale1):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+				
+		if startfem == 1 and endfem == 1:
+			if row[0].startswith(startfemale1) and row[0].endswith(endfemale1):
+					if row[0] not in femnames:
+						femnames.append(row[0].title())
+						
+		if startfem == 2 and endfem == 1:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2)) and row[0].endswith(endfemale1):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+					
+		if startfem == 3 and endfem == 1:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2) or row[0].startswith(startfemale3)) and row[0].endswith(endfemale1):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+
+#Endfem 2
+		if startfem == 0 and endfem == 2:
+			if row[0].endswith(endfemale1) or row[0].endswith(endfemale2):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+				
+		if startfem == 1 and endfem == 2:
+			if row[0].startswith(startfemale1) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2)):
+					if row[0] not in femnames:
+						femnames.append(row[0].title())
+						
+		if startfem == 2 and endfem == 2:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2)) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2)):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+					
+		if startfem == 3 and endfem == 2:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2) or row[0].startswith(startfemale3)) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2)):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+
+#Endfem 3
+		if startfem == 0 and endfem == 3:
+			if row[0].endswith(endfemale1) or row[0].endswith(endfemale2) or row[0].endswith(endfemale3):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+				
+		if startfem == 1 and endfem == 3:
+			if row[0].startswith(startfemale1) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2) or row[0].endswith(endfemale3)):
+					if row[0] not in femnames:
+						femnames.append(row[0].title())
+						
+		if startfem == 2 and endfem == 3:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2)) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2) or row[0].endswith(endfemale3)):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+					
+		if startfem == 3 and endfem == 3:
+			if (row[0].startswith(startfemale1) or row[0].startswith(startfemale2) or row[0].startswith(startfemale3)) and (row[0].endswith(endfemale1) or row[0].endswith(endfemale2) or row[0].endswith(endfemale3)):
+				if row[0] not in femnames:
+					femnames.append(row[0].title())
+
+
+with open(filename, newline='') as csvfile:
+	vulgar = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+	mascnames = []
+	next(vulgar)
+	for row in vulgar:
+		if row[0] not in mascnames:
+			if startmasc == 0 and endmasc == 0:
+				mascnames.append(row[0].title())
+
+			if startmasc == 1 and endmasc == 0:
+				if row[0].startswith(startmale1):
+					mascnames.append(row[0].title())
+
+			if startmasc == 2 and endmasc == 0:
+				if row[0].startswith(startmale1) or row[0].startswith(startmale2):
+					mascnames.append(row[0].title())
+
+			if startmasc == 3 and endmasc == 0:
+				if row[0].startswith(startmale1) or row[0].startswith(startmale2) or row[0].startswith(startmale3):
+					mascnames.append(row[0].title())
+						
+#endmasc 1
+			if startmasc == 0 and endmasc == 1:
+				if row[0].endsswith(endmale1):
+					mascnames.append(row[0].title())
+
+			if startmasc == 1 and endmasc == 1:
+				if row[0].startswith(startmale1) and row[0].endswith(endmale1):
+					mascnames.append(row[0].title())
+
+			if startmasc == 2 and endmasc == 1:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2)) and row[0].endswith(endmale1):
+					mascnames.append(row[0].title())
+						
+			if startmasc == 3 and endmasc == 1:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2) or row[0].startswith(startmale3)) and row[0].endswith(endmale1):
+					mascnames.append(row[0].title())
+
+#endmasc 2
+			if startmasc == 0 and endmasc == 2:
+				if row[0].endswith(endmale1) or row[0].endswith(endmale2):
+					mascnames.append(row[0].title())
+					
+			if startmasc == 1 and endmasc == 2:
+				if row[0].startswith(startmale1) and (row[0].endswith(endmale1) or row[0].endswith(endmale2)):
+					mascnames.append(row[0].title())
+	
+			if startmasc == 2 and endmasc == 2:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2)) and (row[0].endswith(endmale1) or row[0].endswith(endmale2)):
+					mascnames.append(row[0].title())
+						
+			if startmasc == 3 and endmasc == 2:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2) or row[0].startswith(startmale3)) and (row[0].endswith(endmale1) or row[0].endswith(endmale2)):
+					mascnames.append(row[0].title())
+
+#endmasc 3
+			if startmasc == 0 and endmasc == 3:
+				if row[0].endswith(endmale1) or row[0].endswith(endmale2) or row[0].endswith(endmale3):
+					mascnames.append(row[0].title())
+	
+			if startmasc == 1 and endmasc == 3:
+				if row[0].startswith(startmale1) and (row[0].endswith(endmale1) or row[0].endswith(endmale2) or row[0].endswith(endmale3)):
+					mascnames.append(row[0].title())
+		
+			if startmasc == 2 and endmasc == 3:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2)) and (row[0].endswith(endmale1) or row[0].endswith(endmale2) or row[0].endswith(endmale3)):
+					mascnames.append(row[0].title())
+	
+			if startmasc == 3 and endmasc == 3:
+				if (row[0].startswith(startmale1) or row[0].startswith(startmale2) or row[0].startswith(startmale3)) and (row[0].endswith(endmale1) or row[0].endswith(endmale2) or row[0].endswith(endmale3)):
+					mascnames.append(row[0].title())
