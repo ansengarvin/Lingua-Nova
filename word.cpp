@@ -1,6 +1,7 @@
 #include "word.h"
 #include "settingsclass.h"
 #include <string>
+#include <cctype>
 
 Word::Word() {
 
@@ -26,24 +27,106 @@ void Word::change_settings(Settings imported_settings) {
 void Word::generate_word() {
 
     string temp = "";
-    int num_vowels = (int)settings.vowels.size();
-    int num_consonants = (int)settings.consonants.size();
+    int num_consonants = (int)settings.middle_consonants.size();
+    int num_vowels = (int)settings.middle_vowels.size();
 
     //Random length between minimum length and maximum length
     int random_length = rand() % ((settings.max_number_syllables+1) - settings.min_number_syllables) + settings.min_number_syllables;
 
-    if (random_length > 1) {
-
-        random_length = random_length - 2;
-
-    }
-
-    
-
     for (int i = 0; i < random_length; i++) {
+
+        //GENERATE FIRST SYLLABLE
+        if (i == 0) {
+
+            if (settings.first_consonants.size() < 1 && settings.first_vowels.size() < 1) {
+
+                cout << "ERROR: No first vowels or consonants" << endl;
+                word.append("E-R-R-O-R");
+                return;
+
+            }
+
+            else if (settings.first_vowels.size() < 1 && settings.first_consonants.size() >= 1) {
+                word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
+                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);        
+            }
+
+            else if (settings.first_vowels.size() >=1 && settings.first_consonants.size() < 1){
+
+                word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
+            }
+
+            else {
+
+                if (rand() % 100 < 50) {
+
+                    word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
+                    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+
+                }
+
+                else {
+
+                    word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
+
+                }
+            }
+        }
+
+        //GENERATE LAST SYLLABLE
+        else if (i == (random_length - 1)) {
+            
+            if (settings.last_consonants.size() < 1 && settings.last_vowels.size() < 1) {
+
+                cout << "ERROR: No last consonants or vowels to choose from" << endl;
+                word.append("E-R-R-O-R");
+
+            }
+
+            else if (settings.last_consonants.size() >= 1 && settings.last_vowels.size() < 1) {
+
+                word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+                word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
+
+            }
+
+            else if (settings.last_consonants.size() < 1 && settings.last_vowels.size() >= 1) {
+
+                word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+                word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
+
+            }
+
+            else {
+
+                if ((rand() % 100) < 50) {
+                    word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+                    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+                    word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
+                }
+
+                else {
+                    word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+                    word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
+                }
+            }
+        }
         
-        word.append(settings.consonants[rand() % num_consonants]);
-        word.append(settings.vowels[rand() % num_vowels]);
+        //GENERATE MIDDLE SYLLABLE
+        else {
+            
+            if (settings.middle_consonants.size() < 1 || settings.middle_vowels.size() < 1) {
+                cout << "ERROR: You must have at least one middle consonant AND at least one middle vowel" << endl;
+                word.append("E-R-R-O-R");
+            }
+
+            else {
+                word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+                
+            }
+        }
         
     }
 }
