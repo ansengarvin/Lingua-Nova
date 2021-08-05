@@ -41,47 +41,29 @@ void Word::generate_word() {
         if (i == 0) {
 
             if (settings.first_consonants.size() < 1 && settings.first_vowels.size() < 1) {
-
                 cout << "ERROR: No first vowels or consonants" << endl;
                 word.append("E-R-R-O-R");
                 return;
-
             }
 
             else if (settings.first_vowels.size() < 1 && settings.first_consonants.size() >= 1) {
-                
-                //Add first consonant
-                if (add_cluster(settings.first_consonant_cluster_chance))
-                    word.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
-                else
-                    word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
-
-                //Add middle vowel
-                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);        
+                choose_first_consonant();
+                choose_middle_vowel();      
             }
 
             else if (settings.first_vowels.size() >=1 && settings.first_consonants.size() < 1){
-                //Add first vowel
-                word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
+                choose_first_vowel();
             }
 
             else {
 
                 if (rand() % 100 < 50) {
-
-                    if (add_cluster(settings.first_consonant_cluster_chance))
-                        word.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
-                    else    
-                        word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
-
-                    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
-
+                    choose_first_consonant();
+                    choose_middle_vowel();
                 }
 
                 else {
-
-                    word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
-
+                    choose_first_vowel();
                 }
             }
         }
@@ -90,55 +72,32 @@ void Word::generate_word() {
         else if (i == (random_length - 1)) {
             
             if (settings.last_consonants.size() < 1 && settings.last_vowels.size() < 1) {
-
                 cout << "ERROR: No last consonants or vowels to choose from" << endl;
                 word.append("E-R-R-O-R");
-
             }
 
             else if (settings.last_consonants.size() >= 1 && settings.last_vowels.size() < 1) {
-
-                if (add_cluster(settings.middle_consonant_cluster_chance))
-                    word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
-                else
-                    word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
-
-                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
-
-                if (add_cluster(settings.last_consonant_cluster_chance))
-	                word.append(settings.last_consonant_clusters[rand() % settings.last_consonant_clusters.size()]);
-                else
-	                word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
-
+                choose_middle_consonant();
+                choose_middle_vowel();
+                choose_last_consonant();
             }
 
             else if (settings.last_consonants.size() < 1 && settings.last_vowels.size() >= 1) {
-
-                if (add_cluster(settings.middle_consonant_cluster_chance))
-	                word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
-                else
-	                word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
-
-                word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
-
+                choose_middle_consonant();
+                choose_last_vowel();
             }
 
             else {
 
                 if ((rand() % 100) < 50) {
-
-                    if (add_cluster(settings.middle_consonant_cluster_chance))
-	                    word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
-                    else
-	                    word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
-
-                    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
-                    word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
+                    choose_middle_consonant();
+                    choose_middle_vowel();
+                    choose_last_consonant();
                 }
 
                 else {
-                    word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
-                    word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
+                    choose_middle_consonant();
+                    choose_last_vowel();
                 }
             }
         }
@@ -152,13 +111,8 @@ void Word::generate_word() {
             }
 
             else {
-                if (add_cluster(settings.middle_consonant_cluster_chance))
-	                word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
-                else
-	                word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
-
-                word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
-                
+                choose_middle_consonant();
+                choose_middle_vowel();       
             }
         }
     }
@@ -216,7 +170,50 @@ int Word::grab_syllable_length() {
             previous = previous + settings.syllable_distribution[i];
 
         }
-
     }
+}
+
+void Word::choose_first_consonant() {
+
+    if (add_cluster(settings.first_consonant_cluster_chance))
+        word.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
+    else
+        word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
+
+}
+
+void Word::choose_middle_consonant() {
+
+    if (add_cluster(settings.middle_consonant_cluster_chance))
+        word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
+    else
+        word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+
+}
+
+void Word::choose_last_consonant() {
+
+    if (add_cluster(settings.last_consonant_cluster_chance))
+	    word.append(settings.last_consonant_clusters[rand() % settings.last_consonant_clusters.size()]);
+    else
+        word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
+
+}
+
+void Word::choose_first_vowel() {
+
+    word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
+
+}
+
+void Word::choose_middle_vowel() {
+
+    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+
+}
+
+void Word::choose_last_vowel() {
+
+    word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
 
 }

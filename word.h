@@ -27,6 +27,14 @@ class Word {
         void print_word();
 
         int grab_syllable_length();
+
+        void choose_first_consonant();
+        void choose_middle_consonant();
+        void choose_last_consonant();
+
+        void choose_first_vowel();
+        void choose_middle_vowel();
+        void choose_last_vowel();
 };
 
 #endif
