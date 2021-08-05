@@ -18,6 +18,8 @@ class Word {
 
         Word(Settings imported_settings);
 
+        bool add_cluster(int);
+
         void change_settings(Settings imported_settings);
 
         void generate_word();

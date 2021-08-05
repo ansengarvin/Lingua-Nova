@@ -11,10 +11,18 @@ class Settings {
     public:
         vector<string> first_consonants;
         vector<string> first_vowels;
+        int first_consonant_cluster_chance;
+        vector<string> first_consonant_clusters;
+
         vector<string> middle_consonants;
         vector<string> middle_vowels;
+        int middle_consonant_cluster_chance;
+        vector<string> middle_consonant_clusters;
+
         vector<string> last_consonants;
         vector<string> last_vowels;
+        int last_consonant_cluster_chance;
+        vector<string> last_consonant_clusters;
         //int min_number_syllables;
         //int max_number_syllables;
         vector<int> syllable_distribution;
@@ -29,7 +37,9 @@ class Settings {
 
         //vector<int> set_syllable_distribution(INIReader config);
 
-        void parse_settings_from_example_words(vector<string> example);
+        void parse_settings_from_example_words(vector<string>);
+
+        vector<string> create_consonant_clusters(vector<string>);
 
         vector<string> remove_excluded_phonemes(vector<string>, vector<string>);
 
