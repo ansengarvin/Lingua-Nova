@@ -7,8 +7,7 @@ using namespace std;
 
 Settings::Settings() {
 
-    min_number_syllables = 0;
-    max_number_syllables = 0;
+    //cout << "ERROR: No config file provided for setting creation." << endl;
 
 }
 
@@ -35,8 +34,12 @@ Settings::Settings(INIReader config) {
         //cout << "Snipping LV" << endl;
         last_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, "settings", "excluded_last_vowels"));
         
-        min_number_syllables = config.GetInteger("settings", "min_syllables", -1);
-        max_number_syllables = config.GetInteger("settings","max_syllables", -1);
+        //min_number_syllables = config.GetInteger("settings", "min_syllables", -1);
+        //max_number_syllables = config.GetInteger("settings","max_syllables", -1);
+
+        syllable_distribution = parse_int_vector_from_ini(config, "settings", "syllable_distribution");
+
+
     }
 
     else {
@@ -46,6 +49,25 @@ Settings::Settings(INIReader config) {
     }
 
 }
+
+/*OBSOLETE CODE
+vector<int> Settings::set_syllable_distribution(INIReader config) {
+
+    vector<int> raw = parse_int_vector_from_ini(config, "settings", "syllable_distribution");
+    vector<int> temp;
+
+    for (int i = 0; i < raw.size(); i++) {
+
+        for (int j = 0; j < raw[i]; j++) {
+
+            temp.push_back(i+1);
+
+        }
+    }
+
+    return temp;
+}
+*/
 
 vector<string> Settings::parse_vector_from_ini(INIReader config, string section, string setting_name) {
 
@@ -67,6 +89,27 @@ vector<string> Settings::parse_vector_from_ini(INIReader config, string section,
 
     cout << "Temp vector size is " << temp_vector.size() << endl;
     cout << "Returning temp vector" << endl;
+    return temp_vector;
+}
+
+vector<int> Settings::parse_int_vector_from_ini(INIReader config, string section, string setting_name) {
+
+    vector<int> temp_vector;
+    string raw_settings_string = config.GetString(section, setting_name, "");
+    string temp_substring = "";
+    for (int i = 0; i < raw_settings_string.length(); i++) {
+        if (raw_settings_string[i] != ',') {
+            temp_substring.push_back(raw_settings_string[i]);
+        }
+        else {
+            temp_vector.push_back(stoi(temp_substring));
+            temp_substring = "";
+        }
+        if (i == (raw_settings_string.length()-1)) {
+            temp_vector.push_back(stoi(temp_substring));
+        }
+    }
+
     return temp_vector;
 }
 
@@ -133,12 +176,26 @@ void Settings::print_all_settings() {
     print_individual_vector_setting(first_vowels, "first_vowels");
     print_individual_vector_setting(middle_vowels, "middle_vowels");
     print_individual_vector_setting(last_vowels, "last_vowels");
+    print_individual_int_vector_setting(syllable_distribution, "syllable_distribution");
 
-    cout << "min syllables: " << min_number_syllables << endl;
-    cout << "max syllables: " << max_number_syllables << endl;
+    //cout << "min syllables: " << min_number_syllables << endl;
+    //cout << "max syllables: " << max_number_syllables << endl;
 }
 
 void Settings::print_individual_vector_setting(vector<string> &vs, string setting_name) {
+
+    cout << setting_name << ": ";
+    
+    for (int i = 0; i < vs.size(); i++) {
+
+        cout << vs[i] << "|";
+
+    }
+
+    cout << endl;
+}
+
+void Settings::print_individual_int_vector_setting(vector<int> &vs, string setting_name) {
 
     cout << setting_name << ": ";
     

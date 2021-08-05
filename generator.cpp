@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <random>
 #include "settingsclass.h"
 #include "word.h"
 #include "inih-master/cpp/INIReader.h"
@@ -44,6 +45,11 @@ int main() {
         if(cool) {
             wordlist.push_back(new_word);
             n = 0;
+            cout << "A|";
+        }
+
+        else {
+            cout << "R|";
         }
     }
 
@@ -61,12 +67,19 @@ int main() {
     for (int i = 0; i < num_words; i++) {
 
         wordlist[i].word[0] = toupper(wordlist[i].word[0]);
+        cout << "PS: " << wordlist[i].word << endl;
+
+    }
+
+    auto rng = default_random_engine{};
+    shuffle(begin(wordlist), end(wordlist), rng);
+
+    
+    for (int i = 0; i < num_words; i++) {
         cout << "Writing " << wordlist[i].word << endl;
         NewFile << wordlist[i].word;
         NewFile << endl;
-
     }
     
-
     return 0;
 }

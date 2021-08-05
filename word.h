@@ -23,6 +23,8 @@ class Word {
         void generate_word();
 
         void print_word();
+
+        int grab_syllable_length();
 };
 
 #endif

@@ -30,8 +30,10 @@ void Word::generate_word() {
     int num_consonants = (int)settings.middle_consonants.size();
     int num_vowels = (int)settings.middle_vowels.size();
 
-    //Random length between minimum length and maximum length
-    int random_length = rand() % ((settings.max_number_syllables+1) - settings.min_number_syllables) + settings.min_number_syllables;
+    //int random_length = rand() % ((settings.max_number_syllables+1) - settings.min_number_syllables) + settings.min_number_syllables;
+
+    int random_length = grab_syllable_length();
+    cout << "G" << random_length;
 
     for (int i = 0; i < random_length; i++) {
 
@@ -127,12 +129,48 @@ void Word::generate_word() {
                 
             }
         }
-        
     }
 }
 
 void Word::print_word() {
 
     cout << word << endl;
+
+}
+
+int Word::grab_syllable_length() {
+
+    int array_sum = 0;
+
+    for (int i = 0; i < settings.syllable_distribution.size(); i++) {
+
+        array_sum = array_sum + settings.syllable_distribution[i];
+
+    }
+
+    int seed = rand() % array_sum;
+    int previous = 0;
+
+    for (int i = 0; i < settings.syllable_distribution.size(); i++) {
+
+        if (settings.syllable_distribution[i] == 0) {
+
+            continue;
+
+        }
+        
+        else if (seed < settings.syllable_distribution[i] + previous) {
+
+            return i+1;
+
+        }
+
+        else {
+
+            previous = previous + settings.syllable_distribution[i];
+
+        }
+
+    }
 
 }
