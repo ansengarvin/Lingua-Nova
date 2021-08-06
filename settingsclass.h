@@ -10,6 +10,7 @@ class Settings {
 
     public:
         vector<int> syllable_distribution;
+        bool capitalize_words;
         
         vector<string> first_consonants;
         vector<int> first_consonant_distribution;
@@ -31,6 +32,16 @@ class Settings {
         vector<string> middle_consonant_clusters;
         int last_consonant_cluster_chance;
         vector<string> last_consonant_clusters;
+
+        int first_diphthong_chance;
+        vector<string> first_diphthongs;
+        int middle_diphthong_chance;
+        vector<string> middle_diphthongs;
+        int last_diphthong_chance;
+        vector<string> last_diphthongs;
+
+        vector<string> preneous;
+        vector<string> extraneous;
 
         Settings();
 

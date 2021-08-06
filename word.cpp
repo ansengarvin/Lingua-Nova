@@ -13,8 +13,7 @@ Word::Word() {
 Word::Word(Settings imported_settings) {
 
     settings = imported_settings;
-
-    generate_word();
+    generate_word(1);
 
 }
 
@@ -24,8 +23,23 @@ void Word::change_settings(Settings imported_settings) {
 
 }
 
-void Word::generate_word() {
+void Word::generate_word(bool use_extraneous) {
 
+    if (use_extraneous) {
+
+        for (int i = 0; i < settings.preneous.size(); i++) {
+
+            if (settings.preneous[i] == "{WORD}") {
+                generate_word(0);
+            }
+
+            else {
+                word.append(settings.preneous[i]);
+            }
+            word.append(" ");
+        }
+    }
+    
     string temp = "";
     int num_consonants = (int)settings.middle_consonants.size();
     int num_vowels = (int)settings.middle_vowels.size();
@@ -64,6 +78,10 @@ void Word::generate_word() {
 
                 else {
                     choose_first_vowel();
+
+                    if (random_length == 1 && rand() % 100 < 50) {
+                        choose_middle_consonant();
+                    }
                 }
             }
         }
@@ -116,6 +134,21 @@ void Word::generate_word() {
             }
         }
     }
+
+    if (use_extraneous) {
+
+        for (int i = 0; i < settings.extraneous.size(); i++) {
+
+            word.append(" ");
+            if (settings.extraneous[i] == "{WORD}") {
+                generate_word(0);
+            }
+
+            else {
+                word.append(settings.extraneous[i]);
+            }
+        }
+    }
 }
 
 bool Word::add_cluster(int chance) {
@@ -148,7 +181,7 @@ int Word::grab_syllable_length() {
 
     }
 
-    int seed = rand() % array_sum + 1;
+    int seed = rand() % array_sum;
     int previous = 0;
 
     for (int i = 0; i < settings.syllable_distribution.size(); i++) {
@@ -201,10 +234,17 @@ string Word::select_from_dist(vector<string> pool, vector<int> dist) {
 
 void Word::choose_first_consonant() {
 
+    string temp;
+    
     if (add_cluster(settings.first_consonant_cluster_chance))
-        word.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
+        temp.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
     else
-        word.append(select_from_dist(settings.first_consonants, settings.first_consonant_distribution));
+        temp.append(select_from_dist(settings.first_consonants, settings.first_consonant_distribution));
+
+    if (settings.capitalize_words)
+        temp[0] = toupper(temp[0]);
+
+    word.append(temp);
 
 }
 
@@ -228,7 +268,12 @@ void Word::choose_last_consonant() {
 
 void Word::choose_first_vowel() {
 
-    word.append(select_from_dist(settings.first_vowels, settings.first_vowel_distribution));
+    string temp;
+    temp.append(select_from_dist(settings.first_vowels, settings.first_vowel_distribution));
+    if (settings.capitalize_words)
+        temp[0] = toupper(temp[0]);
+    word.append(temp);
+
 
 }
 

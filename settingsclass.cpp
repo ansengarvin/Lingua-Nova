@@ -15,6 +15,8 @@ Settings::Settings(INIReader config, string section) {
 
     if (config.GetInteger("global", "example_mode", 0) < 1) {
         syllable_distribution = parse_int_vector_from_ini(config, section, "syllable_distribution");
+        capitalize_words = config.GetInteger(section,"capitalize_word",1);
+        cout << "Capitalize_words=" << capitalize_words;
 
         first_consonant_cluster_chance = config.GetInteger(section,"first_consonant_cluster_chance",0);
         middle_consonant_cluster_chance = config.GetInteger(section,"middle_consonant_cluster_chance",0);
@@ -60,6 +62,8 @@ Settings::Settings(INIReader config, string section) {
         
         //min_number_syllables = config.GetInteger(section, "min_syllables", -1);
         //max_number_syllables = config.GetInteger(section,"max_syllables", -1);
+        preneous = parse_vector_from_ini(config, section, "preneous");
+        extraneous = parse_vector_from_ini(config, section, "extraneous");
     }
 
     else {
@@ -207,7 +211,7 @@ vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<st
 
             if (pool[i] == exclude_pool[j]) {
                 
-                cout << pool[i] << " is equal to " << exclude_pool[j] << endl;
+                //cout << pool[i] << " is equal to " << exclude_pool[j] << endl;
                 is_okay = 0;
 
             }
@@ -216,7 +220,7 @@ vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<st
 
         if (is_okay) {
 
-            cout << "pushing " << pool[i] << " to temp" << endl;
+            //cout << "pushing " << pool[i] << " to temp" << endl;
             temp.push_back(pool[i]);
             dist.push_back(pool_dist[i]);
 

@@ -22,7 +22,7 @@ class Word {
 
         void change_settings(Settings imported_settings);
 
-        void generate_word();
+        void generate_word(bool);
 
         void print_word();
 

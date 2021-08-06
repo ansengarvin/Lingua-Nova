@@ -66,7 +66,7 @@ int main() {
     
     for (int i = 0; i < num_words; i++) {
 
-        wordlist[i].word[0] = toupper(wordlist[i].word[0]);
+        //wordlist[i].word[0] = toupper(wordlist[i].word[0]);
         //cout << "PS: " << wordlist[i].word << endl;
 
     }
@@ -76,7 +76,7 @@ int main() {
 
     
     for (int i = 0; i < num_words; i++) {
-        cout << "Writing " << wordlist[i].word << endl;
+        cout << wordlist[i].word << endl;
         NewFile << wordlist[i].word;
         NewFile << endl;
     }
