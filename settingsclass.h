@@ -9,27 +9,34 @@ using namespace std;
 class Settings {
 
     public:
+        vector<int> syllable_distribution;
+        
         vector<string> first_consonants;
+        vector<int> first_consonant_distribution;
+        vector<string> middle_consonants;
+        vector<int> middle_consonant_distribution;
+        vector<string> last_consonants;
+        vector<int> last_consonant_distribution;
+        
         vector<string> first_vowels;
+        vector<int> first_vowel_distribution;
+        vector<string> middle_vowels;
+        vector<int> middle_vowel_distribution;;
+        vector<string> last_vowels;
+        vector<int> last_vowel_distribution;
+        
         int first_consonant_cluster_chance;
         vector<string> first_consonant_clusters;
-
-        vector<string> middle_consonants;
-        vector<string> middle_vowels;
         int middle_consonant_cluster_chance;
         vector<string> middle_consonant_clusters;
-
-        vector<string> last_consonants;
-        vector<string> last_vowels;
         int last_consonant_cluster_chance;
         vector<string> last_consonant_clusters;
-        //int min_number_syllables;
-        //int max_number_syllables;
-        vector<int> syllable_distribution;
 
         Settings();
 
-        Settings(INIReader);
+        Settings(INIReader, string);
+
+        vector<int> set_initial_distribution(INIReader, string, string, vector<string>);
 
         vector<string> parse_vector_from_ini(INIReader, string, string);
 
@@ -41,15 +48,15 @@ class Settings {
 
         vector<string> create_consonant_clusters(vector<string>);
 
-        vector<string> remove_excluded_phonemes(vector<string>, vector<string>);
+        vector<string> remove_excluded_phonemes(vector<string>, vector<string>, vector<int>, vector<int> &);
 
         void change_settings(INIReader);
 
         void print_all_settings();
 
-        void print_individual_vector_setting(vector<string> &, string);
+        void print_str_vector(vector<string> &, string);
 
-        void print_individual_int_vector_setting(vector<int> &, string);
+        void print_int_vector(vector<int> &, string);
 };
 
 #endif

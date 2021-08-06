@@ -33,7 +33,7 @@ void Word::generate_word() {
     //int random_length = rand() % ((settings.max_number_syllables+1) - settings.min_number_syllables) + settings.min_number_syllables;
 
     int random_length = grab_syllable_length();
-    cout << "G" << random_length;
+    //cout << "G" << random_length;
 
     for (int i = 0; i < random_length; i++) {
 
@@ -121,7 +121,7 @@ void Word::generate_word() {
 bool Word::add_cluster(int chance) {
     
     int num = rand() % 100 + 1;
-    cout << "Num is " << num << " and chance is " << chance << endl;
+    //cout << "Num is " << num << " and chance is " << chance << endl;
     
     if (num <= chance)
          return true;
@@ -148,18 +148,12 @@ int Word::grab_syllable_length() {
 
     }
 
-    int seed = rand() % array_sum;
+    int seed = rand() % array_sum + 1;
     int previous = 0;
 
     for (int i = 0; i < settings.syllable_distribution.size(); i++) {
-
-        if (settings.syllable_distribution[i] == 0) {
-
-            continue;
-
-        }
         
-        else if (seed < settings.syllable_distribution[i] + previous) {
+        if (seed < settings.syllable_distribution[i] + previous) {
 
             return i+1;
 
@@ -173,12 +167,44 @@ int Word::grab_syllable_length() {
     }
 }
 
+string Word::select_from_dist(vector<string> pool, vector<int> dist) {
+
+    if (dist.size() != pool.size()) {
+
+        cout << "ERROR: Require same number of distribution numbers as phonemes" << endl;
+        return "ERROR";
+
+    }
+
+    int sum = 0;
+
+    for (int i = 0; i < dist.size(); i++) {
+
+        sum = sum + dist[i];
+
+    }
+
+    int rng = rand() % sum + 1;
+    int previous = 0;
+
+    for (int i = 0; i < dist.size(); i++) {
+
+        
+        if (rng <= dist[i] + previous)
+            return pool[i];
+
+        else
+            previous = previous + dist[i];
+
+    }
+}
+
 void Word::choose_first_consonant() {
 
     if (add_cluster(settings.first_consonant_cluster_chance))
         word.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
     else
-        word.append(settings.first_consonants[rand() % settings.first_consonants.size()]);
+        word.append(select_from_dist(settings.first_consonants, settings.first_consonant_distribution));
 
 }
 
@@ -187,7 +213,7 @@ void Word::choose_middle_consonant() {
     if (add_cluster(settings.middle_consonant_cluster_chance))
         word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
     else
-        word.append(settings.middle_consonants[rand() % settings.middle_consonants.size()]);
+        word.append(select_from_dist(settings.middle_consonants, settings.middle_consonant_distribution));
 
 }
 
@@ -196,24 +222,24 @@ void Word::choose_last_consonant() {
     if (add_cluster(settings.last_consonant_cluster_chance))
 	    word.append(settings.last_consonant_clusters[rand() % settings.last_consonant_clusters.size()]);
     else
-        word.append(settings.last_consonants[rand() % settings.last_consonants.size()]);
+        word.append(select_from_dist(settings.last_consonants, settings.last_consonant_distribution));
 
 }
 
 void Word::choose_first_vowel() {
 
-    word.append(settings.first_vowels[rand() % settings.first_vowels.size()]);
+    word.append(select_from_dist(settings.first_vowels, settings.first_vowel_distribution));
 
 }
 
 void Word::choose_middle_vowel() {
 
-    word.append(settings.middle_vowels[rand() % settings.middle_vowels.size()]);
+    word.append(select_from_dist(settings.middle_vowels, settings.middle_vowel_distribution));
 
 }
 
 void Word::choose_last_vowel() {
 
-    word.append(settings.last_vowels[rand() % settings.last_vowels.size()]);
+    word.append(select_from_dist(settings.last_vowels, settings.last_vowel_distribution));
 
 }

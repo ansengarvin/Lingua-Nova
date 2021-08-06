@@ -28,6 +28,8 @@ class Word {
 
         int grab_syllable_length();
 
+        string select_from_dist(vector<string>, vector<int>);
+
         void choose_first_consonant();
         void choose_middle_consonant();
         void choose_last_consonant();
@@ -35,6 +37,8 @@ class Word {
         void choose_first_vowel();
         void choose_middle_vowel();
         void choose_last_vowel();
+
+        string process_phoneme_distribution(vector<string>, vector<int>);
 };
 
 #endif

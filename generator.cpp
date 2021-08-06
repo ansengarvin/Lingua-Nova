@@ -21,7 +21,7 @@ int main() {
 
     int num_words = config.GetInteger("global", "num_words", -1);
 
-    Settings s1(config);
+    Settings s1(config, "settings");
 
     s1.print_all_settings();
 
@@ -45,11 +45,11 @@ int main() {
         if(cool) {
             wordlist.push_back(new_word);
             n = 0;
-            cout << "A|";
+            //cout << "A|";
         }
 
         else {
-            cout << "R|";
+            //cout << "R|";
         }
     }
 
@@ -67,7 +67,7 @@ int main() {
     for (int i = 0; i < num_words; i++) {
 
         wordlist[i].word[0] = toupper(wordlist[i].word[0]);
-        cout << "PS: " << wordlist[i].word << endl;
+        //cout << "PS: " << wordlist[i].word << endl;
 
     }
 

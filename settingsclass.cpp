@@ -11,50 +11,55 @@ Settings::Settings() {
 
 }
 
-Settings::Settings(INIReader config) {
+Settings::Settings(INIReader config, string section) {
 
     if (config.GetInteger("global", "example_mode", 0) < 1) {
-        syllable_distribution = parse_int_vector_from_ini(config, "settings", "syllable_distribution");
-        first_consonant_cluster_chance = config.GetInteger("settings","first_consonant_cluster_chance",0);
-        middle_consonant_cluster_chance = config.GetInteger("settings","middle_consonant_cluster_chance",0);
-        last_consonant_cluster_chance = config.GetInteger("settings","last_consonant_cluster_chance",0);
+        syllable_distribution = parse_int_vector_from_ini(config, section, "syllable_distribution");
+
+        first_consonant_cluster_chance = config.GetInteger(section,"first_consonant_cluster_chance",0);
+        middle_consonant_cluster_chance = config.GetInteger(section,"middle_consonant_cluster_chance",0);
+        last_consonant_cluster_chance = config.GetInteger(section,"last_consonant_cluster_chance",0);
         
         //cout << "Adding consonants to settings" << endl;
-        vector<string> consonant_pool = parse_vector_from_ini(config, "settings", "consonant_pool");
+        vector<string> consonant_pool = parse_vector_from_ini(config, section, "consonant_pool");
+
+        //cout << "Setting phoneme distribution" << endl;
+        vector<int> consonant_distribution = set_initial_distribution(config, section, "consonant_distribution", consonant_pool);
 
         //vector<string> pool_with_clusters = create_consonant_clusters(consonant_pool);
         
         //cout << "Snipping FC" << endl;
-        first_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, "settings", "excluded_first_consonants"));
-        if (first_consonant_cluster_chance >= 1) {
-        first_consonant_clusters = create_consonant_clusters(first_consonants);
-        first_consonant_clusters = remove_excluded_phonemes(first_consonant_clusters, parse_vector_from_ini(config, "settings", "excluded_first_consonants"));
+        first_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_first_consonants"), consonant_distribution, first_consonant_distribution);
+        if (first_consonant_cluster_chance) {
+            first_consonant_clusters = create_consonant_clusters(first_consonants);
+            //first_consonant_clusters = remove_excluded_phonemes(first_consonant_clusters, parse_vector_from_ini(config, section, "excluded_first_consonants"));
         }
         //cout << "Snipping MC" << endl;
-        middle_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, "settings", "excluded_middle_consonants"));
-        if (middle_consonant_cluster_chance >= 1) {
+        middle_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_middle_consonants"), consonant_distribution, middle_consonant_distribution);
+        if (middle_consonant_cluster_chance) {
             middle_consonant_clusters = create_consonant_clusters(middle_consonants);
-            middle_consonant_clusters = remove_excluded_phonemes(middle_consonant_clusters, parse_vector_from_ini(config, "settings", "excluded_middle_consonants"));
+            //middle_consonant_clusters = remove_excluded_phonemes(middle_consonant_clusters, parse_vector_from_ini(config, section, "excluded_middle_consonants"));
         }
         //cout << "Snipping LC" << endl;
-        last_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, "settings", "excluded_last_consonants"));
-        if (last_consonant_cluster_chance >= 1) {
+        last_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_last_consonants"), consonant_distribution, last_consonant_distribution);
+        if (last_consonant_cluster_chance) {
             last_consonant_clusters = create_consonant_clusters(last_consonants);
-            last_consonant_clusters = remove_excluded_phonemes(last_consonant_clusters, parse_vector_from_ini(config, "settings", "excluded_last_consonants"));
+            //last_consonant_clusters = remove_excluded_phonemes(last_consonant_clusters, parse_vector_from_ini(config, section, "excluded_last_consonants"));
         }
 
         //cout << "Adding vowels to settings" << endl;
-        vector<string> vowel_pool = parse_vector_from_ini(config, "settings", "vowel_pool");
+        vector<string> vowel_pool = parse_vector_from_ini(config, section, "vowel_pool");
+        vector<int> vowel_distribution = set_initial_distribution(config, section, "vowel_distribution", vowel_pool);
 
         //cout << "Snipping FV" << endl;
-        first_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, "settings", "excluded_first_vowels"));
+        first_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_first_vowels"), vowel_distribution, first_vowel_distribution);
         //cout << "Snipping MV" << endl;
-        middle_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, "settings", "excluded_middle_vowels"));
+        middle_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_middle_vowels"), vowel_distribution, middle_vowel_distribution);
         //cout << "Snipping LV" << endl;
-        last_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, "settings", "excluded_last_vowels"));
+        last_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_last_vowels"), vowel_distribution, last_vowel_distribution);
         
-        //min_number_syllables = config.GetInteger("settings", "min_syllables", -1);
-        //max_number_syllables = config.GetInteger("settings","max_syllables", -1);
+        //min_number_syllables = config.GetInteger(section, "min_syllables", -1);
+        //max_number_syllables = config.GetInteger(section,"max_syllables", -1);
     }
 
     else {
@@ -65,10 +70,40 @@ Settings::Settings(INIReader config) {
 
 }
 
+vector<int> Settings::set_initial_distribution(INIReader config, string section, string setting, vector<string> pool) {
+
+    vector<int> distribution;
+    
+    if (config.GetInteger(section, "enable_phoneme_distribution", 0)) {
+        
+        distribution = parse_int_vector_from_ini(config, section, setting);
+
+        print_int_vector(distribution, "distribution");
+        print_str_vector(pool, "pool");
+        
+        if (pool.size() != distribution.size()) {
+
+            cout << "Error: Distribution is smaller than pool." << endl;
+            exit(0);
+        }
+    }
+
+    else {
+
+        for (int i = 0; i < pool.size(); i++) {
+
+            distribution.push_back(1);
+
+        }
+    }
+
+    return distribution;
+}
+
 /*OBSOLETE CODE
 vector<int> Settings::set_syllable_distribution(INIReader config) {
 
-    vector<int> raw = parse_int_vector_from_ini(config, "settings", "syllable_distribution");
+    vector<int> raw = parse_int_vector_from_ini(config, section, "syllable_distribution");
     vector<int> temp;
 
     for (int i = 0; i < raw.size(); i++) {
@@ -102,8 +137,6 @@ vector<string> Settings::parse_vector_from_ini(INIReader config, string section,
         }
     }
 
-    cout << "Temp vector size is " << temp_vector.size() << endl;
-    cout << "Returning temp vector" << endl;
     return temp_vector;
 }
 
@@ -161,14 +194,9 @@ vector<string> Settings::create_consonant_clusters(vector<string> pool) {
     return temp;
 }
 
-vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<string> exclude_pool) {
+vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<string> exclude_pool, vector<int> pool_dist, vector<int> &dist) {
 
     vector<string> temp;
-    
-    if (exclude_pool.size() == 0) {
-        cout << "Exclude pool size is zero" << endl;
-        return pool;
-    }
 
     //If any letter in the pool is excluded, do not add to the final string.
     for (int i = 0; i < pool.size(); i++) {
@@ -190,6 +218,7 @@ vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<st
 
             cout << "pushing " << pool[i] << " to temp" << endl;
             temp.push_back(pool[i]);
+            dist.push_back(pool_dist[i]);
 
         }
     }
@@ -206,22 +235,32 @@ void Settings::change_settings(INIReader config) {
 void Settings::print_all_settings() {
 
     cout << "Attempting to print settings" << endl;
-    print_individual_vector_setting(first_consonants, "first_consonants");
-    print_individual_vector_setting(middle_consonants, "middle_consonants");
-    print_individual_vector_setting(last_consonants, "last_consonants");
-    print_individual_vector_setting(first_vowels, "first_vowels");
-    print_individual_vector_setting(middle_vowels, "middle_vowels");
-    print_individual_vector_setting(last_vowels, "last_vowels");
-    print_individual_vector_setting(first_consonant_clusters, "first_consonant_clusters");
-    print_individual_vector_setting(middle_consonant_clusters, "middle_consonant_clusters");
-    print_individual_vector_setting(last_consonant_clusters, "last_consonant_clusters");
-    print_individual_int_vector_setting(syllable_distribution, "syllable_distribution");
+    print_int_vector(syllable_distribution, "syllable_distribution");
+    cout << endl;
+    print_str_vector(first_consonants, "first_consonants");
+    print_int_vector(first_consonant_distribution, "first_consonant_distribution");
+    print_str_vector(middle_consonants, "middle_consonants");
+    print_int_vector(middle_consonant_distribution, "middle_consonant_distribution");
+    print_str_vector(last_consonants, "last_consonants");
+    print_int_vector(last_consonant_distribution, "last_consonant_distribution");
+    cout << endl;
+    print_str_vector(first_vowels, "first_vowels");
+    print_int_vector(first_vowel_distribution, "first_vowel_distribution");
+    print_str_vector(middle_vowels, "middle_vowels");
+    print_int_vector(middle_vowel_distribution, "middle_vowel_distribution");
+    print_str_vector(last_vowels, "last_vowels");
+    print_int_vector(middle_vowel_distribution, "middle_vowel_distribution");
+    cout << endl;
+    print_str_vector(first_consonant_clusters, "first_consonant_clusters");
+    print_str_vector(middle_consonant_clusters, "middle_consonant_clusters");
+    print_str_vector(last_consonant_clusters, "last_consonant_clusters");
+    print_int_vector(syllable_distribution, "syllable_distribution");
 
     //cout << "min syllables: " << min_number_syllables << endl;
     //cout << "max syllables: " << max_number_syllables << endl;
 }
 
-void Settings::print_individual_vector_setting(vector<string> &vs, string setting_name) {
+void Settings::print_str_vector(vector<string> &vs, string setting_name) {
 
     cout << setting_name << ": ";
     
@@ -234,7 +273,7 @@ void Settings::print_individual_vector_setting(vector<string> &vs, string settin
     cout << endl;
 }
 
-void Settings::print_individual_int_vector_setting(vector<int> &vs, string setting_name) {
+void Settings::print_int_vector(vector<int> &vs, string setting_name) {
 
     cout << setting_name << ": ";
     
