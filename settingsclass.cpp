@@ -16,49 +16,72 @@ Settings::Settings(INIReader config, string section) {
     if (config.GetInteger("global", "example_mode", 0) < 1) {
         syllable_distribution = parse_int_vector_from_ini(config, section, "syllable_distribution");
         capitalize_words = config.GetInteger(section,"capitalize_word",1);
-        cout << "Capitalize_words=" << capitalize_words;
+        //cout << "Capitalize_words=" << capitalize_words;
 
         first_consonant_cluster_chance = config.GetInteger(section,"first_consonant_cluster_chance",0);
         middle_consonant_cluster_chance = config.GetInteger(section,"middle_consonant_cluster_chance",0);
         last_consonant_cluster_chance = config.GetInteger(section,"last_consonant_cluster_chance",0);
         
         //cout << "Adding consonants to settings" << endl;
-        vector<string> consonant_pool = parse_vector_from_ini(config, section, "consonant_pool");
+        consonant_pool = parse_vector_from_ini(config, section, "consonant_pool");
 
         //cout << "Setting phoneme distribution" << endl;
         vector<int> consonant_distribution = set_initial_distribution(config, section, "consonant_distribution", consonant_pool);
+
+        consonant_spelling = parse_vector_from_ini(config, section, "consonant_spelling");
+
+        if (consonant_pool.size() != consonant_spelling.size()) {
+
+            cout << "ERROR: consonant pool is not same size as it's spelling pool" << endl;
+            exit(0);
+
+        }
 
         //vector<string> pool_with_clusters = create_consonant_clusters(consonant_pool);
         
         //cout << "Snipping FC" << endl;
         first_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_first_consonants"), consonant_distribution, first_consonant_distribution);
+        first_consonant_spelling = generate_spelling_vector(first_consonants, consonant_pool, consonant_spelling);
         if (first_consonant_cluster_chance) {
             first_consonant_clusters = create_consonant_clusters(first_consonants);
             //first_consonant_clusters = remove_excluded_phonemes(first_consonant_clusters, parse_vector_from_ini(config, section, "excluded_first_consonants"));
         }
         //cout << "Snipping MC" << endl;
         middle_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_middle_consonants"), consonant_distribution, middle_consonant_distribution);
+        middle_consonant_spelling = generate_spelling_vector(middle_consonants, consonant_pool, consonant_spelling);
         if (middle_consonant_cluster_chance) {
             middle_consonant_clusters = create_consonant_clusters(middle_consonants);
             //middle_consonant_clusters = remove_excluded_phonemes(middle_consonant_clusters, parse_vector_from_ini(config, section, "excluded_middle_consonants"));
         }
         //cout << "Snipping LC" << endl;
         last_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_last_consonants"), consonant_distribution, last_consonant_distribution);
+        last_consonant_spelling = generate_spelling_vector(last_consonants, consonant_pool, consonant_spelling);
         if (last_consonant_cluster_chance) {
             last_consonant_clusters = create_consonant_clusters(last_consonants);
             //last_consonant_clusters = remove_excluded_phonemes(last_consonant_clusters, parse_vector_from_ini(config, section, "excluded_last_consonants"));
         }
 
         //cout << "Adding vowels to settings" << endl;
-        vector<string> vowel_pool = parse_vector_from_ini(config, section, "vowel_pool");
+        vowel_pool = parse_vector_from_ini(config, section, "vowel_pool");
         vector<int> vowel_distribution = set_initial_distribution(config, section, "vowel_distribution", vowel_pool);
+        vowel_spelling = parse_vector_from_ini(config, section, "vowel_spelling");
+
+        if (vowel_pool.size() != vowel_spelling.size()) {
+
+            cout << "ERROR: vowel pool is not same size as it's spelling pool" << endl;
+            exit(0);
+
+        }
 
         //cout << "Snipping FV" << endl;
         first_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_first_vowels"), vowel_distribution, first_vowel_distribution);
+        first_vowel_spelling = generate_spelling_vector(first_vowels, vowel_pool, vowel_spelling);
         //cout << "Snipping MV" << endl;
         middle_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_middle_vowels"), vowel_distribution, middle_vowel_distribution);
+        middle_vowel_spelling = generate_spelling_vector(middle_vowels, vowel_pool, vowel_spelling);
         //cout << "Snipping LV" << endl;
         last_vowels = remove_excluded_phonemes(vowel_pool, parse_vector_from_ini(config, section, "excluded_last_vowels"), vowel_distribution, last_vowel_distribution);
+        last_vowel_spelling = generate_spelling_vector(last_vowels, vowel_pool, vowel_spelling);
         
         //min_number_syllables = config.GetInteger(section, "min_syllables", -1);
         //max_number_syllables = config.GetInteger(section,"max_syllables", -1);
@@ -228,6 +251,38 @@ vector<string> Settings::remove_excluded_phonemes(vector<string> pool, vector<st
     }
 
     return temp;
+}
+
+vector<string> Settings::generate_spelling_vector(vector<string> shorty, vector<string> pool, vector<string> spelling_pool) {
+
+    //cout << "Generating spelling vector" << endl;
+    
+    if (pool.size() != spelling_pool.size()) {
+
+        cout << "Pool size is not equal to spelling pool size" << endl;
+        exit(0);
+
+    }
+    
+    vector<string> new_pool;
+    
+    for (int i = 0; i < shorty.size(); i++) {
+
+        //cout << "i=" << i << ",";
+
+        for (int j = 0; j < pool.size(); j++) {
+            //cout << "j=" << j << ":";
+
+            if (shorty[i] == pool[j]) {
+                //cout << "F|" << endl;
+                new_pool.push_back(spelling_pool[j]);
+                continue;
+            }
+
+        }
+    }
+
+    return new_pool;
 }
 
 //Copy this from Settings::Settings if you need to use it for some reason in the future.

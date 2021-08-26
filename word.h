@@ -11,6 +11,7 @@ class Word {
 
     public:
         string word;
+        string spelling;
         string definition;
         Settings settings;
 
@@ -28,7 +29,7 @@ class Word {
 
         int grab_syllable_length();
 
-        string select_from_dist(vector<string>, vector<int>);
+        int select_from_dist(vector<string>, vector<int>);
 
         void choose_first_consonant();
         void choose_middle_consonant();

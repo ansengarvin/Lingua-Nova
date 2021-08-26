@@ -200,16 +200,22 @@ int Word::grab_syllable_length() {
     }
 }
 
-string Word::select_from_dist(vector<string> pool, vector<int> dist) {
+int Word::select_from_dist(vector<string> pool, vector<int> dist) {
 
+    //cout << "attemping to choose from distribution" << endl;
+
+    //cout << "p: " << dist.size() << " " << pool.size() << endl;
+    
     if (dist.size() != pool.size()) {
 
         cout << "ERROR: Require same number of distribution numbers as phonemes" << endl;
-        return "ERROR";
+        exit(0);
 
     }
 
     int sum = 0;
+
+    //cout << "setting dist sum" << endl;
 
     for (int i = 0; i < dist.size(); i++) {
 
@@ -217,74 +223,131 @@ string Word::select_from_dist(vector<string> pool, vector<int> dist) {
 
     }
 
+    //cout << "getting rng number based on dist" << endl;
+
     int rng = rand() % sum + 1;
     int previous = 0;
 
+    //cout << "selecting i from dist" << endl;
+
     for (int i = 0; i < dist.size(); i++) {
 
-        
-        if (rng <= dist[i] + previous)
-            return pool[i];
+        //cout << "i=" << i << endl;
+        if (rng <= dist[i] + previous) {
+
+            //cout << "attempting to return i" << endl;
+            return i;
+
+        }
+            
 
         else
-            previous = previous + dist[i];
+            previous = previous + i;
 
     }
 }
 
 void Word::choose_first_consonant() {
 
+    //cout << "choosing first consonant" << endl;
+
     string temp;
     
-    if (add_cluster(settings.first_consonant_cluster_chance))
+    int rng = select_from_dist(settings.first_consonants, settings.first_consonant_distribution);
+    
+    if (add_cluster(settings.first_consonant_cluster_chance)) {
+
         temp.append(settings.first_consonant_clusters[rand() % settings.first_consonant_clusters.size()]);
-    else
-        temp.append(select_from_dist(settings.first_consonants, settings.first_consonant_distribution));
+        
+    }
+        
+    else {
 
-    if (settings.capitalize_words)
+        word.append(settings.first_consonants[rng]);
+        temp.append(settings.first_consonant_spelling[rng]);
+
+    }
+
+    if (settings.capitalize_words) {
         temp[0] = toupper(temp[0]);
+    }
 
-    word.append(temp);
+    spelling.append(temp);
 
 }
 
 void Word::choose_middle_consonant() {
 
+    //cout << "choosing middle consonant" << endl;
+
+    int rng = select_from_dist(settings.middle_consonants, settings.middle_consonant_distribution);
+    
     if (add_cluster(settings.middle_consonant_cluster_chance))
         word.append(settings.middle_consonant_clusters[rand() % settings.middle_consonant_clusters.size()]);
-    else
-        word.append(select_from_dist(settings.middle_consonants, settings.middle_consonant_distribution));
+
+    else {
+        word.append(settings.middle_consonants[rng]);
+        spelling.append(settings.middle_consonant_spelling[rng]);
+    }        
 
 }
 
 void Word::choose_last_consonant() {
 
+    //cout << "choosing last consonant" << endl;
+
+    int rng = select_from_dist(settings.last_consonants, settings.last_consonant_distribution);
+    
     if (add_cluster(settings.last_consonant_cluster_chance))
 	    word.append(settings.last_consonant_clusters[rand() % settings.last_consonant_clusters.size()]);
-    else
-        word.append(select_from_dist(settings.last_consonants, settings.last_consonant_distribution));
+
+    else {
+        word.append(settings.last_consonants[rng]);
+        spelling.append(settings.last_consonant_spelling[rng]);
+    }
 
 }
 
 void Word::choose_first_vowel() {
 
+    //cout << "choosing first vowel" << endl;
+
     string temp;
-    temp.append(select_from_dist(settings.first_vowels, settings.first_vowel_distribution));
+    int rng = select_from_dist(settings.first_vowels, settings.first_vowel_distribution);
+
+    word.append(settings.first_vowels[rng]);
+    
+    temp.append(settings.first_vowel_spelling[rng]);
+
     if (settings.capitalize_words)
         temp[0] = toupper(temp[0]);
-    word.append(temp);
+
+
+    spelling.append(temp);
 
 
 }
 
 void Word::choose_middle_vowel() {
 
-    word.append(select_from_dist(settings.middle_vowels, settings.middle_vowel_distribution));
+    //cout << "choosing middle vowel" << endl;
+
+    int rng = select_from_dist(settings.middle_vowels, settings.middle_vowel_distribution);
+    
+    word.append(settings.middle_vowels[rng]);
+    spelling.append(settings.middle_vowel_spelling[rng]);
 
 }
 
 void Word::choose_last_vowel() {
 
-    word.append(select_from_dist(settings.last_vowels, settings.last_vowel_distribution));
+    //cout << "choosing last vowel" << endl;
+
+    int rng = select_from_dist(settings.last_vowels, settings.last_vowel_distribution);
+
+    //cout << "rng=" << rng << endl;
+
+    word.append(settings.last_vowels[rng]);
+    spelling.append(settings.last_vowel_spelling[rng]);
 
 }

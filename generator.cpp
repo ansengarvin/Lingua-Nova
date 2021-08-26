@@ -21,7 +21,7 @@ int main() {
 
     int num_words = config.GetInteger("global", "num_words", -1);
 
-    Settings s1(config, "settings");
+    Settings s1(config, "generic");
 
     s1.print_all_settings();
 
@@ -76,8 +76,8 @@ int main() {
 
     
     for (int i = 0; i < num_words; i++) {
-        cout << wordlist[i].word << endl;
-        NewFile << wordlist[i].word;
+        cout << wordlist[i].word << " || " << wordlist[i].spelling << endl;
+        NewFile << wordlist[i].word << " || " << wordlist[i].spelling << endl;
         NewFile << endl;
     }
     

@@ -9,21 +9,33 @@ using namespace std;
 class Settings {
 
     public:
+
+        vector<string> consonant_pool;
+        vector<string> vowel_pool;
+        vector<string> consonant_spelling;
+        vector<string> vowel_spelling;
+
         vector<int> syllable_distribution;
         bool capitalize_words;
         
         vector<string> first_consonants;
+        vector<string> first_consonant_spelling;
         vector<int> first_consonant_distribution;
         vector<string> middle_consonants;
+        vector<string> middle_consonant_spelling;
         vector<int> middle_consonant_distribution;
         vector<string> last_consonants;
+        vector<string> last_consonant_spelling;
         vector<int> last_consonant_distribution;
         
         vector<string> first_vowels;
+        vector<string> first_vowel_spelling;
         vector<int> first_vowel_distribution;
         vector<string> middle_vowels;
+        vector<string> middle_vowel_spelling;
         vector<int> middle_vowel_distribution;;
         vector<string> last_vowels;
+        vector<string> last_vowel_spelling;
         vector<int> last_vowel_distribution;
         
         int first_consonant_cluster_chance;
@@ -60,6 +72,8 @@ class Settings {
         vector<string> create_consonant_clusters(vector<string>);
 
         vector<string> remove_excluded_phonemes(vector<string>, vector<string>, vector<int>, vector<int> &);
+
+        vector<string> generate_spelling_vector(vector<string>, vector<string>, vector<string>);
 
         void change_settings(INIReader);
 
