@@ -39,6 +39,10 @@ class Word {
         void choose_middle_vowel();
         void choose_last_vowel();
 
+        void create_phonetic_cluster(vector<string>, vector<string>, vector<string>, vector<string>, vector<int>, vector<int>, vector<string>);
+
+        bool vet_phonetic_cluster(vector<string>, string, string);
+
         string process_phoneme_distribution(vector<string>, vector<int>);
 };
 

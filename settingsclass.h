@@ -38,19 +38,24 @@ class Settings {
         vector<string> last_vowel_spelling;
         vector<int> last_vowel_distribution;
         
+        //Consonant cluster string vectors are commented because I want to handle them on-the-fly using dist
+
         int first_consonant_cluster_chance;
-        vector<string> first_consonant_clusters;
+        //vector<string> first_consonant_clusters;
+        vector<string> excluded_first_consonant_clusters;
         int middle_consonant_cluster_chance;
-        vector<string> middle_consonant_clusters;
+        //vector<string> middle_consonant_clusters;
+        vector<string> excluded_middle_consonant_clusters;
         int last_consonant_cluster_chance;
-        vector<string> last_consonant_clusters;
+        //vector<string> last_consonant_clusters;
+        vector<string> excluded_last_consonant_clusters;
 
         int first_diphthong_chance;
-        vector<string> first_diphthongs;
+        //vector<string> first_diphthongs;
         int middle_diphthong_chance;
-        vector<string> middle_diphthongs;
+        //vector<string> middle_diphthongs;
         int last_diphthong_chance;
-        vector<string> last_diphthongs;
+        //vector<string> last_diphthongs;
 
         vector<string> preneous;
         vector<string> extraneous;

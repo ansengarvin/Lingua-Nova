@@ -43,22 +43,19 @@ Settings::Settings(INIReader config, string section) {
         first_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_first_consonants"), consonant_distribution, first_consonant_distribution);
         first_consonant_spelling = generate_spelling_vector(first_consonants, consonant_pool, consonant_spelling);
         if (first_consonant_cluster_chance) {
-            first_consonant_clusters = create_consonant_clusters(first_consonants);
-            //first_consonant_clusters = remove_excluded_phonemes(first_consonant_clusters, parse_vector_from_ini(config, section, "excluded_first_consonants"));
+            excluded_first_consonant_clusters = parse_vector_from_ini(config, section, "excluded_first_consonants");
         }
         //cout << "Snipping MC" << endl;
         middle_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_middle_consonants"), consonant_distribution, middle_consonant_distribution);
         middle_consonant_spelling = generate_spelling_vector(middle_consonants, consonant_pool, consonant_spelling);
         if (middle_consonant_cluster_chance) {
-            middle_consonant_clusters = create_consonant_clusters(middle_consonants);
-            //middle_consonant_clusters = remove_excluded_phonemes(middle_consonant_clusters, parse_vector_from_ini(config, section, "excluded_middle_consonants"));
+            excluded_middle_consonant_clusters = parse_vector_from_ini(config, section, "excluded_middle_consonants");
         }
         //cout << "Snipping LC" << endl;
         last_consonants = remove_excluded_phonemes(consonant_pool, parse_vector_from_ini(config, section, "excluded_last_consonants"), consonant_distribution, last_consonant_distribution);
         last_consonant_spelling = generate_spelling_vector(last_consonants, consonant_pool, consonant_spelling);
         if (last_consonant_cluster_chance) {
-            last_consonant_clusters = create_consonant_clusters(last_consonants);
-            //last_consonant_clusters = remove_excluded_phonemes(last_consonant_clusters, parse_vector_from_ini(config, section, "excluded_last_consonants"));
+            excluded_last_consonant_clusters = parse_vector_from_ini(config, section, "excluded_last_consonant_clusters");
         }
 
         //cout << "Adding vowels to settings" << endl;
@@ -310,9 +307,9 @@ void Settings::print_all_settings() {
     print_str_vector(last_vowels, "last_vowels");
     print_int_vector(middle_vowel_distribution, "middle_vowel_distribution");
     cout << endl;
-    print_str_vector(first_consonant_clusters, "first_consonant_clusters");
-    print_str_vector(middle_consonant_clusters, "middle_consonant_clusters");
-    print_str_vector(last_consonant_clusters, "last_consonant_clusters");
+    print_str_vector(excluded_first_consonant_clusters, "excluded_first_consonant_clusters");
+    print_str_vector(excluded_middle_consonant_clusters, "excluded_middle_consonant_clusters");
+    print_str_vector(excluded_last_consonant_clusters, "excluded_last_consonant_clusters");
     print_int_vector(syllable_distribution, "syllable_distribution");
 
     //cout << "min syllables: " << min_number_syllables << endl;

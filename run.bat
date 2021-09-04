@@ -1,3 +1,3 @@
 @echo off
 
-build\test.exe
+build\ln.exe
