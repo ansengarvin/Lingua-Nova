@@ -9,6 +9,7 @@
 #include "settingsclass.h"
 #include "word.h"
 #include "inih-master/cpp/INIReader.h"
+#include <locale.h>
 
 using namespace std;
 
@@ -34,12 +35,14 @@ void add_words(ofstream & nf, int marker, int num_words, vector<vector<Word>> wo
         nf << "\"";
         nf << wordlists[marker][ini_tracker[marker]].spelling + "\"";
         if (j < num_words - 1)
-            nf << ",";
+            nf << " ";
         ini_tracker[marker]++;
     }
 
 
 }
+
+void add_preset_sequentials(ofstream as);
 
 void generate_word_array(int num_words, vector<Word> & wordlist, Settings & s1) {
 
@@ -79,6 +82,7 @@ void generate_word_array(int num_words, vector<Word> & wordlist, Settings & s1) 
 
 int main() {
     cout << "Welcome to the best name generator" << endl;
+
     srand((unsigned int)time(NULL));
 
     INIReader stellaris("stellaris.ini");
@@ -261,6 +265,7 @@ int main() {
     cout << "Selecting ship names" << endl;
     //categories[0]==ship_names section
     for (int i = 0; i < categories[0].size(); i++) {
+        cout << tab + "choosing for " << categories[0][i] << endl;
         int mk = markers[0][i];
         nf << tab + tab + ship_types[i] + " = {" + nl;
         nf << tab + tab + tab;
@@ -278,6 +283,7 @@ int main() {
     cout << "Selecting ship class names" << endl;
     //categories[1]=ship_class_names, [1][0]=generic
     nf << tab + "ship_class_names = {" + nl;
+    cout << tab + "choosing for generic" << endl;
     nf << tab + tab + categories[1][0]+ " = {" + nl;
     nf << tab + tab + tab;
     //GENERATE NAMES HERE
@@ -287,22 +293,23 @@ int main() {
     nf << tab + "}" + nl + nl;
 
 
-    seq_bool = stellaris.GetBoolean("fleet_names_sequential_titles","prefix_suffix",1);
+    cout << "choosing fleet names" << endl;
+    seq_bool = stellaris.GetBoolean("fleet_names_sequential","prefix_suffix",1);
     
     nf << tab + "fleet_names = {" + nl;
+    cout << tab + "choosing for random_names" << endl;
     nf << tab + tab + "random_names = {" + nl;
     //GENERATE NAMES HERE
     //Make sure to add an option for "'s" and another option for fleet_type (e.g. "armada", "navy", etc)
     nf << nl + tab + tab + "}" + nl;
-    nf << tab + tab + "sequential_name =";
+    nf << tab + tab + "sequential_name = ";
     //ADDING SEQUENTIAL NAMES
-    cout << "seq_bool=" << seq_bool << endl;
     if (!seq_bool) {
-        nf << "\"%O% " + stellaris.GetString("fleet_names_sequential_titles","sequential_title","nov_is_great") + "\" ";
+        nf << "\"%O% " + stellaris.GetString("fleet_names_sequential","sequential_title","nov_is_great") + "\" ";
     }
     
     else {
-        nf << "\"" + stellaris.GetString("fleet_names_sequential_titles","sequential_title","nov_is_great") + " %C%\"";
+        nf << "\"" + stellaris.GetString("fleet_names_sequential","sequential_title","nov_is_great") + " %C%\"";
     }
     nf << nl;
     nf << tab + "}" + nl + nl;
@@ -310,17 +317,27 @@ int main() {
     //ARMIES
     nf << tab + "army_names = {" + nl + nl;
 
+    cout << "choosing army names" << endl;
     vector<string> army_types = {"machine_defense", "machine_assault_1", "machine_assault_2", "machine_assault_3", "defense_army", "assault_army", "slave_army", "clone_army", "undead_army", "robotic_army", "robotic_defense_army", "psionic_army", "xenomorph_army", "gene_warrior_army", "occupation_army", "robotic_occupation_army", "primitive_army", "industrial_army", "postatomic_army"};
-
+    seq_bool = stellaris.GetBoolean("army_names_sequential","prefix_suffix",1);
+    
     for (int i = 0; i < army_types.size(); i++) {
 
+        cout << tab + "choosing for " << categories[3][i] << endl;
         nf << tab + tab + army_types[i] + " = {" + nl;
         nf << tab + tab + tab + "random_names = {" + nl;
-        //for (int i = 0; i <)
-        nf << tab + tab + tab + "}" + nl;
-        nf << tab + tab + tab + "sequential_name = %O%" + " INSERT"/*INSERT HERE*/ + nl;
-        nf << tab + tab + "}" + nl;
-
+        nf << tab + tab + tab + tab;
+        add_words(nf, markers[3][i],word_num_vct[3][i],wordlists,ini_tracker);
+        nf << nl + tab + tab + tab + "}" + nl;
+        nf << tab + tab + tab + "sequential_name = ";
+        if (!seq_bool) {
+            nf << "\"%O% " + stellaris.GetString("army_names_sequential",categories[3][i],"nov_is_great") + "\" ";
+        }
+    
+        else {
+            nf << "\"" + stellaris.GetString("army_names_sequential",categories[3][i],"nov_is_great") + " %C%\"";
+        }
+        nf << nl + tab + tab + "}" + nl;
         if (i != army_types.size() - 1)
             nf << nl;
     }
@@ -329,14 +346,17 @@ int main() {
     //PLANETS
     nf << tab + "planet_names = {" + nl;
 
+    cout << "choosing planet names" << endl;
     vector<string> planet_types = {"generic","pc_desert","pc_tropical","pc_arid","pc_continental","pc_ocean","pc_tundra","pc_arctic","pc_savannah","pc_alpine"};
     
     for (int i = 0; i < planet_types.size(); i++) {
-
+        cout << tab + "choosing for " << categories[4][i] << endl;
         nf << tab + tab + planet_types[i] + " = {" + nl;
         nf << tab + tab + tab + "names = {" + nl;
+        nf << tab + tab + tab + tab;
         //GENERATE NAMES HERE//
-        nf << tab + tab + tab + "}" + nl;
+        add_words(nf, markers[4][i],word_num_vct[4][i],wordlists,ini_tracker);
+        nf << nl + tab + tab + tab + "}" + nl;
         nf << tab + tab + "}" + nl;
 
         if (i != planet_types.size() - 1)
@@ -344,6 +364,7 @@ int main() {
     }
     nf << tab + "}" + nl + nl;
 
+    cout << "choosing character names" << endl;
     //CHARACTER NAMES
     nf << tab + "character_names = {" + nl;
     nf << tab + tab + "default = {" + nl;
@@ -351,10 +372,11 @@ int main() {
     vector<string> character_name_types = {"full_names","full_names_male","full_names_female","first_names","first_names_male","first_names_female","second_names","regnal_first_names","regnal_first_names_male","regnal_first_names_female","regnal_second_names"};
 
     for (int i = 0; i < character_name_types.size(); i++) {
-
+        cout << tab + "choosing for " << categories[5][i] << endl;
         nf << tab + tab + tab + character_name_types[i] + " = {" + nl;
-        //GENERATE NAMES HERE
-        nf << tab + tab + tab + "}" + nl;
+        nf << tab + tab + tab + tab;
+        add_words(nf, markers[5][i],word_num_vct[5][i],wordlists,ini_tracker);
+        nf << nl + tab + tab + tab + "}" + nl;
 
         if (i != character_name_types.size() - 1)
             nf << nl;

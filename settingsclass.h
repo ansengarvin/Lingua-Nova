@@ -87,6 +87,8 @@ class Settings {
         void print_str_vector(vector<string> &, string);
 
         void print_int_vector(vector<int> &, string);
+
+        void insurance();
 };
 
 #endif

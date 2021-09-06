@@ -2,6 +2,8 @@
 #include "settingsclass.h"
 #include <string>
 #include <cctype>
+#include <locale.h>
+#include <unicode_functions.h>
 
 Word::Word() {
 
@@ -62,11 +64,46 @@ void Word::generate_word(bool use_extraneous) {
 
             else if (settings.first_vowels.size() < 1 && settings.first_consonants.size() >= 1) {
                 choose_first_consonant();
-                choose_middle_vowel();      
+
+                if (random_length == 1) {
+
+                    if (settings.last_vowels.size() < 1) {
+                        choose_middle_vowel();
+                        choose_last_consonant();
+                        break;
+                    }
+
+                    else if (settings.last_consonants.size() < 1) {
+                        choose_last_vowel();
+                    }
+
+                    else {
+
+                        if (rand() % 100 < 50) {
+                            choose_middle_vowel();
+                            choose_last_consonant();
+                        }
+
+                        else
+                            choose_last_vowel();
+
+                    }
+                }
             }
 
             else if (settings.first_vowels.size() >=1 && settings.first_consonants.size() < 1){
                 choose_first_vowel();
+
+                if (random_length == 1) {
+
+                    if (settings.last_consonants.size() < 1) {
+                        break;
+                    }
+
+                    else if (rand() % 100 < 50) {
+                        choose_last_consonant();
+                    }
+                }
             }
 
             else {
@@ -74,7 +111,7 @@ void Word::generate_word(bool use_extraneous) {
                 if (rand() % 100 < 50) {
                     choose_first_consonant();
 
-                    if (random_length == 1 && rand() % 100 < 50) {
+                    if ((random_length == 1 && rand() % 100 < 50) && settings.last_consonants.size() > 1) {
 
                         choose_middle_vowel();
                         choose_last_consonant();
@@ -88,7 +125,7 @@ void Word::generate_word(bool use_extraneous) {
                 else {
                     choose_first_vowel();
 
-                    if (random_length == 1 && rand() % 100 < 50) {
+                    if ((random_length == 1 && rand() % 100 < 50) && settings.last_consonants.size() > 1) {
                         choose_last_consonant();
                     }
                 }
@@ -234,7 +271,7 @@ int Word::select_from_dist(vector<string> pool, vector<int> dist) {
 
     //cout << "getting rng number based on dist" << endl;
 
-    int rng = rand() % sum + 1;
+    int rng = rand() % (sum + 1);
     int previous = 0;
 
     //cout << "selecting i from dist" << endl;
@@ -254,7 +291,7 @@ int Word::select_from_dist(vector<string> pool, vector<int> dist) {
 }
 
 void Word::choose_first_consonant() {
-
+    auto& f = use_facet<ctype<wchar_t>>(locale());
     //cout << "choosing first consonant" << endl;
 
     string temp;
@@ -278,7 +315,7 @@ void Word::choose_first_consonant() {
     }
 
     if (settings.capitalize_words) {
-        temp[0] = toupper(temp[0]);
+        f.toupper(temp[0]);
     }
 
     spelling.append(temp);
@@ -310,7 +347,7 @@ void Word::choose_middle_consonant() {
 }
 
 void Word::choose_last_consonant() {
-
+    
     //cout << "choosing last consonant" << endl;
 
     int rng = select_from_dist(settings.last_consonants, settings.last_consonant_distribution);
@@ -332,9 +369,7 @@ void Word::choose_last_consonant() {
 }
 
 void Word::choose_first_vowel() {
-
     //cout << "choosing first vowel" << endl;
-
     string temp;
     int rng = select_from_dist(settings.first_vowels, settings.first_vowel_distribution);
 
@@ -343,10 +378,11 @@ void Word::choose_first_vowel() {
     temp.append(settings.first_vowel_spelling[rng]);
 
     if (settings.capitalize_words)
-        temp[0] = toupper(temp[0]);
+        toupper(temp[0]);
 
 
     spelling.append(temp);
+
 
 
 }

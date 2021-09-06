@@ -92,6 +92,8 @@ Settings::Settings(INIReader config, string section) {
 
     }
 
+    insurance();
+
 }
 
 vector<int> Settings::set_initial_distribution(INIReader config, string section, string setting, vector<string> pool) {
@@ -340,4 +342,29 @@ void Settings::print_int_vector(vector<int> &vs, string setting_name) {
     }
 
     cout << endl;
+}
+
+void Settings::insurance() {
+
+    if (first_vowels.size() < 1 && first_consonants.size() < 1) {
+
+        cout << "ERROR: No first phonemes to choose from." << endl;
+        exit(0);
+
+    }
+
+    if (middle_vowels.size() < 1 && middle_consonants.size() < 1) {
+
+        cout << "ERROR: No middle phonemes to choose from" << endl;
+        exit(0);
+
+    }
+
+    if (last_vowels.size() < 1 && last_consonants.size() < 1) {
+
+        cout << "ERROR: No last phonemes to choose from" << endl;
+        exit(0);
+
+    }
+
 }
